@@ -1,11 +1,10 @@
-
-
 import React, { Component } from 'react';
 import { nanoid } from 'nanoid';
 import ContactForm from './ContactForm';
 import Filter from './Filter';
 import ContactList from './ContactList';
 import './Phonebook.css';
+import PropTypes from 'prop-types';
 
 class Phonebook extends Component {
   state = {
@@ -22,21 +21,21 @@ class Phonebook extends Component {
     alertText: '',
   };
 
-  handleNameChange = (event) => {
+  handleNameChange = event => {
     this.setState({ name: event.target.value });
   };
 
-  handleNumberChange = (event) => {
+  handleNumberChange = event => {
     this.setState({ number: event.target.value });
   };
 
-  handleFilterChange = (event) => {
+  handleFilterChange = event => {
     this.setState({ filter: event.target.value.toLowerCase() });
   };
 
-  handleDeleteContact = (contactId) => {
-    this.setState((prevState) => ({
-      contacts: prevState.contacts.filter((contact) => contact.id !== contactId),
+  handleDeleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
     }));
   };
 
@@ -48,7 +47,7 @@ class Phonebook extends Component {
     }
 
     const isContactExists = contacts.some(
-      (contact) => contact.name.toLowerCase() === name.toLowerCase()
+      contact => contact.name.toLowerCase() === name.toLowerCase()
     );
 
     if (isContactExists) {
@@ -65,7 +64,7 @@ class Phonebook extends Component {
       number,
     };
 
-    this.setState((prevState) => ({
+    this.setState(prevState => ({
       contacts: [...prevState.contacts, newContact],
       name: '',
       number: '',
@@ -79,11 +78,9 @@ class Phonebook extends Component {
   render() {
     const { name, number, contacts, filter } = this.state;
 
-    const filteredContacts = contacts.filter((contact) =>
+    const filteredContacts = contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter)
     );
-
-    const isFilterActive = filter !== '';
 
     return (
       <div>
@@ -102,12 +99,10 @@ class Phonebook extends Component {
         <h2>Contacts</h2>
 
         <Filter filter={filter} onFilterChange={this.handleFilterChange} />
-        {isFilterActive && (
-          <ContactList
-            contacts={filteredContacts}
-            onDeleteContact={this.handleDeleteContact}
-          />
-        )}
+        <ContactList
+          contacts={filteredContacts}
+          onDeleteContact={this.handleDeleteContact}
+        />
 
         {this.state.showAlert && (
           <div className="alert">
@@ -119,5 +114,26 @@ class Phonebook extends Component {
     );
   }
 }
+
+Phonebook.propTypes = {
+  name: PropTypes.string.isRequired,
+  number: PropTypes.string.isRequired,
+  contacts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  filter: PropTypes.string.isRequired,
+  showAlert: PropTypes.bool.isRequired,
+  alertText: PropTypes.string.isRequired,
+  onNameChange: PropTypes.func.isRequired,
+  onNumberChange: PropTypes.func.isRequired,
+  onFilterChange: PropTypes.func.isRequired,
+  onDeleteContact: PropTypes.func.isRequired,
+  onAddContact: PropTypes.func.isRequired,
+  onAlertClose: PropTypes.func.isRequired,
+};
 
 export default Phonebook;
